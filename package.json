@@ -16,6 +16,8 @@
         "url": "https://github.com/andychups/moloko/issues"
     },
     "dependencies": {
-        "docco-husky": "0.3.3"
+        "docco-husky": "0.3.3",
+        "grunt-jasmine-runner": "latest",
+        "grunt": "~0.3.9"
     }
 }

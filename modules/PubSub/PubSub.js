@@ -34,17 +34,16 @@
 function PubSub () {
     /**
      * Хэш с каналами
-     * @type {Object}
      * @protected
+     * @type {Object}
      */
     this._channels = {};
 }
 
 /**
- * Публикация события в один или несколько каналов
- * @arguments
- * @returns {PubSub}
+ * Публикация для одного или нескольких каналов
  * @public
+ * @returns {PubSub}
  */
 PubSub.prototype.publish = function () {
     var args = Array.prototype.slice.call(arguments),
@@ -61,11 +60,11 @@ PubSub.prototype.publish = function () {
 };
 
 /**
- * Публикация события для одного канала
+ * Публикация для одного канала
+ * @protected
  * @param {String} channelName
  * @param {Array} [args]
  * @returns {PubSub}
- * @protected
  */
 PubSub.prototype._publish = function (channelName, args) {
     var channels = this._channels,
@@ -90,11 +89,11 @@ PubSub.prototype._publish = function (channelName, args) {
 };
 
 /**
- * Подписка на события в однои или нескольких каналах
+ * Подписка на публикации в однои или нескольких каналах
+ * @public
  * @param {String} channelName
  * @param {Function} callback
  * @returns {PubSub}
- * @public
  */
 PubSub.prototype.subscribe = function (channelName, callback) {
     this._subscribe(channelName, callback);
@@ -103,11 +102,11 @@ PubSub.prototype.subscribe = function (channelName, callback) {
 };
 
 /**
- * Подписка на события в однои или нескольких каналах
+ * Подписка на публикации в одном или нескольких каналах
+ * @public
  * @param {String} channelName
  * @param {Function} callback
  * @returns {PubSub}
- * @public
  */
 PubSub.prototype.one = function (channelName, callback) {
     this._subscribe(channelName, callback, true);
@@ -117,11 +116,11 @@ PubSub.prototype.one = function (channelName, callback) {
 
 /**
  * Подписка на события в однои или нескольких каналах
+ * @protected
  * @param {String} channelName
  * @param {Function} callback
  * @param {Boolean} isOnce
  * @returns {null}
- * @protected
  */
 PubSub.prototype._subscribe = function (channelName, callback, isOnce) {
     var channels = this._channels,
@@ -144,10 +143,10 @@ PubSub.prototype._subscribe = function (channelName, callback, isOnce) {
 
 /**
  * Отписка от публикаций в одном или нескольких каналах
+ * @public
  * @param {String} channelName
  * @param {Function} [callback]
  * @returns {PubSub}
- * @public
  */
 PubSub.prototype.unsubscribe = function (channelName, callback) {
     var channelNames = channelName.split(' ');
@@ -161,10 +160,10 @@ PubSub.prototype.unsubscribe = function (channelName, callback) {
 
 /**
  * Отписка от получения событий в одном канале
+ * @protected
  * @param {String} channelName
  * @param {Function} [callback]
  * @returns {PubSub}
- * @protected
  */
 PubSub.prototype._unsubscribe = function (channelName, callback) {
     var channels = this._channels,
