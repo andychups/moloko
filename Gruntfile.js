@@ -3,15 +3,17 @@ module.exports = function (grunt) {
         jasmine: {
             pivotal: {
                 src: 'modules/**/*.js'
-    //            options: {
-    //                specs: 'spec/*Spec.js',
-    //                helpers: 'spec/*Helper.js'
-    //            }
             }
+        },
+
+        'docco_husky': {
+            project_name: 'moloko',
+            files: ['modules/**/*.js']
         }
     });
 
     grunt.loadNpmTasks('grunt-contrib-jasmine');
+    grunt.loadNpmTasks('grunt-docco-husky');
 
-    grunt.registerTask('default', 'jasmine');
+    grunt.registerTask('default', ['jasmine', 'docco_husky']);
 };
