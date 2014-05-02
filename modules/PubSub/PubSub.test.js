@@ -6,6 +6,7 @@ describe('PubSub', function () {
      * + подписка на несколько каналов / публикация на несколько каналов
      * + одноразовая подписка на один канал / одноразовая публикация на один канал
      * + одноразовая подписка на несколько каналов / одноразовая публикация на несколько каналов
+     * - порядок выполнения событий
      *
      * + отписка от одного канала (с каллбеком и без)
      * + отписка от нескольких каналов (с каллбеком и без)
@@ -96,6 +97,33 @@ describe('PubSub', function () {
             channel.publish('event-2', 'myData-21');
             expect(eventName).toEqual('event-2');
             expect(eventData).toEqual('myData-2');
+        });
+
+        it("check order publications for handlers in one channel", function () {
+            var eventsOrder = [];
+
+            channel.subscribe('event-1', function (e, data) {
+                eventsOrder.push(1);
+            });
+
+            channel.subscribe('event-1', function (e, data) {
+                eventsOrder.push(2);
+            });
+
+            channel.subscribe('event-1', function (e, data) {
+                eventsOrder.push(3);
+            });
+
+            channel.subscribe('event-1', function (e, data) {
+                eventsOrder.push(4);
+            });
+
+            channel.publish('event-1');
+
+            expect(eventsOrder[0]).toEqual(1);
+            expect(eventsOrder[1]).toEqual(2);
+            expect(eventsOrder[2]).toEqual(3);
+            expect(eventsOrder[3]).toEqual(4);
         });
     });
 

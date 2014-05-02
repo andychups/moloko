@@ -5,6 +5,7 @@
 <li>подписка на несколько каналов / публикация на несколько каналов</li>
 <li>одноразовая подписка на один канал / одноразовая публикация на один канал</li>
 <li>одноразовая подписка на несколько каналов / одноразовая публикация на несколько каналов</li>
+<li>порядок выполнения событий</li>
 </ul></div><div class="body"><ul>
 <li>отписка от одного канала (с каллбеком и без)</li>
 <li>отписка от нескольких каналов (с каллбеком и без)</li>
@@ -94,6 +95,33 @@
             <span class="nx">channel</span><span class="p">.</span><span class="nx">publish</span><span class="p">(</span><span class="s1">&#39;event-2&#39;</span><span class="p">,</span> <span class="s1">&#39;myData-21&#39;</span><span class="p">);</span>
             <span class="nx">expect</span><span class="p">(</span><span class="nx">eventName</span><span class="p">).</span><span class="nx">toEqual</span><span class="p">(</span><span class="s1">&#39;event-2&#39;</span><span class="p">);</span>
             <span class="nx">expect</span><span class="p">(</span><span class="nx">eventData</span><span class="p">).</span><span class="nx">toEqual</span><span class="p">(</span><span class="s1">&#39;myData-2&#39;</span><span class="p">);</span>
+        <span class="p">});</span>
+
+        <span class="nx">it</span><span class="p">(</span><span class="s2">&quot;check order publications for handlers in one channel&quot;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">eventsOrder</span> <span class="o">=</span> <span class="p">[];</span>
+
+            <span class="nx">channel</span><span class="p">.</span><span class="nx">subscribe</span><span class="p">(</span><span class="s1">&#39;event-1&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">e</span><span class="p">,</span> <span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">eventsOrder</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+            <span class="p">});</span>
+
+            <span class="nx">channel</span><span class="p">.</span><span class="nx">subscribe</span><span class="p">(</span><span class="s1">&#39;event-1&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">e</span><span class="p">,</span> <span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">eventsOrder</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
+            <span class="p">});</span>
+
+            <span class="nx">channel</span><span class="p">.</span><span class="nx">subscribe</span><span class="p">(</span><span class="s1">&#39;event-1&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">e</span><span class="p">,</span> <span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">eventsOrder</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="mi">3</span><span class="p">);</span>
+            <span class="p">});</span>
+
+            <span class="nx">channel</span><span class="p">.</span><span class="nx">subscribe</span><span class="p">(</span><span class="s1">&#39;event-1&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">e</span><span class="p">,</span> <span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">eventsOrder</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="mi">4</span><span class="p">);</span>
+            <span class="p">});</span>
+
+            <span class="nx">channel</span><span class="p">.</span><span class="nx">publish</span><span class="p">(</span><span class="s1">&#39;event-1&#39;</span><span class="p">);</span>
+
+            <span class="nx">expect</span><span class="p">(</span><span class="nx">eventsOrder</span><span class="p">[</span><span class="mi">0</span><span class="p">]).</span><span class="nx">toEqual</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+            <span class="nx">expect</span><span class="p">(</span><span class="nx">eventsOrder</span><span class="p">[</span><span class="mi">1</span><span class="p">]).</span><span class="nx">toEqual</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
+            <span class="nx">expect</span><span class="p">(</span><span class="nx">eventsOrder</span><span class="p">[</span><span class="mi">2</span><span class="p">]).</span><span class="nx">toEqual</span><span class="p">(</span><span class="mi">3</span><span class="p">);</span>
+            <span class="nx">expect</span><span class="p">(</span><span class="nx">eventsOrder</span><span class="p">[</span><span class="mi">3</span><span class="p">]).</span><span class="nx">toEqual</span><span class="p">(</span><span class="mi">4</span><span class="p">);</span>
         <span class="p">});</span>
     <span class="p">});</span>
 
@@ -310,4 +338,4 @@
     <span class="p">});</span>
 <span class="p">});</span>
 
-</pre></div></td></tr></tbody></table><div id="generated">generated Fri May 02 2014 22:13:04 GMT+0400 (MSK)  </div><div id="projectname"><a href="../../index.html">moloko</a></div></div></body></html>
+</pre></div></td></tr></tbody></table><div id="generated">generated Fri May 02 2014 23:46:57 GMT+0400 (MSK)  </div><div id="projectname"><a href="../../index.html">moloko</a></div></div></body></html>

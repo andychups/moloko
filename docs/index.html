@@ -1,11 +1,62 @@
 <!DOCTYPE html><html><head><title>README</title><meta http-equiv="Content-Type" content="text/html" charset="UTF-8"><link rel="stylesheet" media="all" href="./docco.css"></head><body><div id="container"><div id="background"></div><div id="jump_to">Jump To &hellip;<div id="jump_wrapper"><div id="jump_page"><a href="./index.html" class="source"><span class="file_name">README</span></a><a href="./modules/PubSub/PubSub.js.html" class="source "><span class="base_path">modules / PubSub / </span><span class="file_name">PubSub.js</span></a><a href="./modules/PubSub/PubSub.test.js.html" class="source "><span class="base_path">modules / PubSub / </span><span class="file_name">PubSub.test.js</span></a></div></div></div><table cellpadding="0" cellspacing="0"><thead><tr><th class="docs"></th><th class="code"></th></tr></thead><tbody><tr id="section"><td class="docs"><h1>moloko
 </h1><p>Набор модулей</p><h3>Version</h3><p>0.0.1</p><h3>Author</h3><p>andychups</p><h3>Repository</h3><p>git - https://github.com/andychups/moloko</p><h3>Dependencies </h3><ul><li><b>docco-husky </b><span>0.3.3</span></li><li><b>grunt </b><span>0.4.4</span></li><li><b>grunt-docco-husky </b><span>https://github.com/andychups/grunt-docco-husky/tarball/1.0.0</span></li><li><b>grunt-contrib-jasmine </b><span>0.6.4</span></li></ul><p><h3>Stats</h3><pre class="code_stats">
-http://cloc.sourceforge.net v 1.55  T=0.5 s (4.0 files/s, 1174.0 lines/s)
+http://cloc.sourceforge.net v 1.55  T=0.5 s (4.0 files/s, 1294.0 lines/s)
 -------------------------------------------------------------------------------
 Language                     files          blank        comment           code
 -------------------------------------------------------------------------------
-Javascript                       2            125            103            359
+Javascript                       2            136            123            388
 -------------------------------------------------------------------------------
-SUM:                             2            125            103            359
+SUM:                             2            136            123            388
 -------------------------------------------------------------------------------
-</pre></p></td><td id="content" class="code"><h1>moloko</h1>  </td></tr></tbody></table><div id="generated">generated Fri May 02 2014 22:13:04 GMT+0400 (MSK)  </div><div id="projectname"><a href="./index.html">moloko</a></div></div></body></html>
+</pre></p></td><td id="content" class="code"><h1>moloko.js</h1>
+
+<p>Set of modules for front-end architecture</p>
+
+<h2>PubSub</h2>
+
+<p>Publish–subscribe pattern</p>
+
+<p><strong>Main fetures</strong></p>
+
+<ul>
+<li>Subscribe/unsubscribe to one or several channel</li>
+<li>Publish to one or several channel</li>
+<li>Method <em>.one</em> fire one time and unsubscribe after that</li>
+<li>Have shortcuts: trigger, on, off</li>
+</ul>
+
+<p><strong>Example</strong></p>
+
+<p>```
+var channel = new PubSub();</p>
+
+<p>function callback (e, data) {
+    console.log(e, data);
+}</p>
+
+<p>channel.subscribe('channel1 channel2 channel3', function (e, data) {
+   console.log(e, data);
+})</p>
+
+<p>channel.subscribe('channel3', callback);</p>
+
+<p>channel.one('channel4', function (e, data) {
+   console.log(e, data);
+});</p>
+
+<p>channel.publish('channel1 channel2 channel3', {'key': 'value'});</p>
+
+<p>channel.publish('channel4', {'key': 'value'});</p>
+
+<p>channel.unsubscribe('channel1 channel2');</p>
+
+<p>channel.unsubscribe('channel3', callback);</p>
+
+<p>channel.unsubscribe('channel3');</p>
+
+<p>channel.on('channel1', callback);</p>
+
+<p>channel.trigger('channel1');</p>
+
+<p>channel.off('channel1');
+```</p>  </td></tr></tbody></table><div id="generated">generated Fri May 02 2014 23:46:57 GMT+0400 (MSK)  </div><div id="projectname"><a href="./index.html">moloko</a></div></div></body></html>

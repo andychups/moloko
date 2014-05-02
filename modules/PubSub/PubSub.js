@@ -132,16 +132,18 @@ PubSub.prototype._publish = function (channelName, args) {
     args.unshift({'name': channelName, 'timestamp': (+new Date)});
     channel = channels[channelName];
 
-    i = 0;
     l = channel.length;
+    i = l;
 
-    for (; i < l; i++) {
-        channelEventObject = channel[i];
+    for (;i;) {
+        channelEventObject = channel[l - i];
         channelEventObject.callback.apply(channelEventObject, args);
 
         if (channelEventObject.once) {
             this._unsubscribe(channelName, channelEventObject.callback);
         }
+
+        --i;
     }
 
     return null;
@@ -188,7 +190,9 @@ PubSub.prototype.one = function (channelName, callback) {
  * @returns {null}
  */
 PubSub.prototype._subscribe = function (channelName, callback, isOnce) {
-    var channelNames;
+    var channelNames,
+        i,
+        l;
 
     if (channelName.indexOf(' ') === -1) {
         this._addEventToChannel(channelName, callback, isOnce);
@@ -198,13 +202,24 @@ PubSub.prototype._subscribe = function (channelName, callback, isOnce) {
 
     channelNames = channelName.split(' ');
 
-    for (var i = 0, l = channelNames.length; i < l; i++) {
-        this._addEventToChannel(channelNames[i], callback, isOnce);
+    l = channelNames.length;
+    i = l;
+
+    for (;i;) {
+        this._addEventToChannel(channelNames[l - i], callback, isOnce);
+        --i;
     }
 
     return null;
 };
 
+/**
+ * Добавляет обработчик в канал
+ * @param {String} channelName
+ * @param {Function} callback
+ * @param {Boolean} [isOnce = false]
+ * @private
+ */
 PubSub.prototype._addEventToChannel = function (channelName, callback, isOnce) {
     var channels = this._channels;
 
