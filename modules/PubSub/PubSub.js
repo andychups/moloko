@@ -40,20 +40,66 @@ function PubSub () {
     this._channels = {};
 }
 
+function PubSubEvent (once, callback) {
+    this.once = once;
+
+    this.callback = callback;
+}
+
 /**
  * Публикация для одного или нескольких каналов
  * @public
  * @returns {PubSub}
  */
 PubSub.prototype.publish = function () {
-    var args = Array.prototype.slice.call(arguments),
-        channelName = args.shift(),
-        channelNames;
+    var args,
+        channelName,
+        channelNames,
+        i,
+        l;
 
-    channelNames = channelName.split(' ');
+    /**
+     * Рассчитываем, что пользователь не мудак и не будет вызавать метод без параметров
+     */
+    switch (arguments.length) {
+        case 1:
+            channelName = arguments[0];
+            args = [];
+        break;
 
-    for (var i = 0, l = channelNames.length; i < l; i++) {
-        this._publish(channelNames[i], args.slice());
+        case 2:
+            channelName = arguments[0];
+            args = [arguments[1]];
+        break;
+
+        case 3:
+            channelName = arguments[0];
+            args = [arguments[1], arguments[2]];
+        break;
+
+        case 4:
+            channelName = arguments[0];
+            args = [arguments[1], arguments[2], arguments[3]];
+        break;
+
+        default:
+            args = Array.prototype.slice.call(arguments);
+            channelName = args.shift();
+        break;
+    }
+
+
+    if (channelName.indexOf(' ') === -1) {
+        this._publish(channelName, args);
+        return this;
+    } else {
+        channelNames = channelName.split(' ');
+        i = 0;
+        l = channelNames.length;
+
+        for (; i < l; i++) {
+            this._publish(channelNames[i], args.slice());
+        }
     }
 
     return this;
@@ -68,20 +114,28 @@ PubSub.prototype.publish = function () {
  */
 PubSub.prototype._publish = function (channelName, args) {
     var channels = this._channels,
-        channel;
+        channel,
+        channelEventObject,
+        i,
+        l;
 
     if (!channels.hasOwnProperty(channelName)) {
-        return this;
+        return null;
     }
 
     args.unshift({'name': channelName, 'timestamp': (+new Date)});
     channel = channels[channelName];
 
-    for (var i = 0, l = channel.length; i < l; i++) {
-        channel[i].callback.apply(channel[i], args);
+    i = 0;
+    l = channel.length;
 
-        if (channel[i].once) {
-            this._unsubscribe(channelName, channel[i].callback);
+
+    for (; i < l; i++) {
+        channelEventObject = channel[i];
+        channelEventObject.callback.apply(channelEventObject, args);
+
+        if (channelEventObject.once) {
+            this._unsubscribe(channelName, channelEventObject.callback);
         }
     }
 
@@ -123,22 +177,31 @@ PubSub.prototype.one = function (channelName, callback) {
  * @returns {null}
  */
 PubSub.prototype._subscribe = function (channelName, callback, isOnce) {
-    var channels = this._channels,
-        channelNames;
+    var channelNames;
+
+    if (channelName.indexOf(' ') === -1) {
+        this._addEventToChannel(channelName, callback, isOnce);
+
+        return null;
+    }
 
     channelNames = channelName.split(' ');
 
     for (var i = 0, l = channelNames.length; i < l; i++) {
-        channelName = channelNames[i];
-
-        if (!channels.hasOwnProperty(channelName)) {
-            channels[channelName] = [];
-        }
-
-        channels[channelName].push({'once': isOnce, 'callback': callback});
+        this._addEventToChannel(channelNames[i], callback, isOnce);
     }
 
     return null;
+};
+
+PubSub.prototype._addEventToChannel = function (channelName, callback, isOnce) {
+    var channels = this._channels;
+
+    if (!channels.hasOwnProperty(channelName)) {
+        channels[channelName] = [];
+    }
+
+    channels[channelName].push(new PubSubEvent(isOnce, callback));
 };
 
 /**
@@ -149,7 +212,15 @@ PubSub.prototype._subscribe = function (channelName, callback, isOnce) {
  * @returns {PubSub}
  */
 PubSub.prototype.unsubscribe = function (channelName, callback) {
-    var channelNames = channelName.split(' ');
+    var channelNames;
+
+    if (channelName.indexOf(' ') === -1) {
+        this._unsubscribe(channelName, callback);
+
+        return this;
+    }
+
+    channelNames = channelName.split(' ');
 
     for (var i = 0, l = channelNames.length; i < l; i++) {
         this._unsubscribe(channelNames[i], callback);
