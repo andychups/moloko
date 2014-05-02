@@ -13,9 +13,13 @@ Publish–subscribe pattern
 * Method *.one* fire one time and unsubscribe after that
 * Have shortcuts: trigger, on, off
 
+**Benchmarks**
+
+http://jsperf.com/pubsubjs-vs-jquery-custom-events/142
+
 **Example**
 
-```
+```javascript
 var channel = new PubSub();
 
 function callback (e, data) {
