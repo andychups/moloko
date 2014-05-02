@@ -1,0 +1,132 @@
+<!DOCTYPE html><html><head><title>PubSub.js</title><meta http-equiv="Content-Type" content="text/html" charset="UTF-8"><link rel="stylesheet" media="all" href="../../docco.css"></head><body><div id="container"><div id="background"></div><div id="jump_to">Jump To &hellip;<div id="jump_wrapper"><div id="jump_page"><a href="../../index.html" class="source"><span class="file_name">README</span></a><a href="../../modules/PubSub/PubSub.js.html" class="source selected"><span class="base_path">modules / PubSub / </span><span class="file_name">PubSub.js</span></a><a href="../../modules/PubSub/PubSub.test.js.html" class="source "><span class="base_path">modules / PubSub / </span><span class="file_name">PubSub.test.js</span></a></div></div></div><table cellpadding="0" cellspacing="0"><thead><tr><th class="docs"><h1>PubSub.js</h1><div class="filepath">modules/PubSub/</div></th><th class="code"></th></tr></thead><tbody><tr id="section-1"><td class="docs"><div class="pilwrap"><a href="#section-1" class="pilcrow">&#182;</a></div><div class="dox"><div class="summary"><p>Реализация паттерна Publish/Subscribe</p></div><div class="body"><p><strong>Основные возможности</strong></p>
+
+
+<ul>
+<li>Подписка/отписка на один или несколько каналов</li>
+<li>Публикация на один или несколько каналов</li>
+<li>Метод <em>.one</em> подпишется на канал/каналы и отпишется после первой публикации</li>
+</ul>
+
+
+<p><strong>Пример</strong></p>
+
+<div class="highlight"><pre lang="javascript">var channel = new PubSub();
+
+channel.subscribe('channel1 channel2', function (e, data) {
+   console.log(e, data);
+})
+
+channel.subscribe('channel3', function (e, data) {
+   console.log(e, data);
+});
+
+channel.publish('channel1 channel2 channel3', {'key': 'value'});
+
+channel.unsubscribe('channel1 channel2 channel3');
+
+</pre></div></div></div>
+</td><td class="code"><div class="highlight"><pre></pre></div></td></tr><tr id="section-2"><td class="docs"><div class="pilwrap"><a href="#section-2" class="pilcrow">&#182;</a></div><div class="dox"><div class="summary"><p>@constructor</p></div><div class="body"></div></div>
+</td><td class="code"><div class="highlight"><pre><span class="kd">function</span> <span class="nx">PubSub</span> <span class="p">()</span> <span class="p">{</span></pre></div></td></tr><tr id="section-3"><td class="docs"><div class="pilwrap"><a href="#section-3" class="pilcrow">&#182;</a></div><div class="dox"><div class="summary"><p>Хэш с каналами</p></div><div class="details"><div class="dox_tag_title">Type</div><div class="dox_tag_detail"><span class="dox_type">Object</span></div></div><div class="body"></div></div>
+</td><td class="code"><div class="highlight"><pre>    <span class="k">this</span><span class="p">.</span><span class="nx">_channels</span> <span class="o">=</span> <span class="p">{};</span>
+<span class="p">}</span></pre></div></td></tr><tr id="section-4"><td class="docs"><div class="pilwrap"><a href="#section-4" class="pilcrow">&#182;</a></div><div class="dox"><div class="summary"><p>Публикация для одного или нескольких каналов</p></div><div class="details"></div><div class="body"></div></div>
+</td><td class="code"><div class="highlight"><pre><span class="nx">PubSub</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">publish</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">args</span> <span class="o">=</span> <span class="nb">Array</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">slice</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">arguments</span><span class="p">),</span>
+        <span class="nx">channelName</span> <span class="o">=</span> <span class="nx">args</span><span class="p">.</span><span class="nx">shift</span><span class="p">(),</span>
+        <span class="nx">channelNames</span><span class="p">;</span>
+
+    <span class="nx">channelNames</span> <span class="o">=</span> <span class="nx">channelName</span><span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">);</span>
+
+    <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">l</span> <span class="o">=</span> <span class="nx">channelNames</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">l</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">_publish</span><span class="p">(</span><span class="nx">channelNames</span><span class="p">[</span><span class="nx">i</span><span class="p">],</span> <span class="nx">args</span><span class="p">.</span><span class="nx">slice</span><span class="p">());</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
+<span class="p">};</span></pre></div></td></tr><tr id="section-5"><td class="docs"><div class="pilwrap"><a href="#section-5" class="pilcrow">&#182;</a></div><div class="dox"><div class="summary"><p>Публикация для одного канала</p></div><div class="details"><div class="dox_tag_title">Params</div><div class="dox_tag_detail"><span>channelName </span><span class="dox_type">String</span></div><div class="dox_tag_detail"><span>[args] </span><span class="dox_type">Array</span></div></div><div class="body"></div></div>
+</td><td class="code"><div class="highlight"><pre><span class="nx">PubSub</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">_publish</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">channelName</span><span class="p">,</span> <span class="nx">args</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">channels</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_channels</span><span class="p">,</span>
+        <span class="nx">channel</span><span class="p">;</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">channels</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">channelName</span><span class="p">))</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="nx">args</span><span class="p">.</span><span class="nx">unshift</span><span class="p">({</span><span class="s1">&#39;name&#39;</span><span class="o">:</span> <span class="nx">channelName</span><span class="p">,</span> <span class="s1">&#39;timestamp&#39;</span><span class="o">:</span> <span class="p">(</span><span class="o">+</span><span class="k">new</span> <span class="nb">Date</span><span class="p">)});</span>
+    <span class="nx">channel</span> <span class="o">=</span> <span class="nx">channels</span><span class="p">[</span><span class="nx">channelName</span><span class="p">];</span>
+
+    <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">l</span> <span class="o">=</span> <span class="nx">channel</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">l</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">channel</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">callback</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">channel</span><span class="p">[</span><span class="nx">i</span><span class="p">],</span> <span class="nx">args</span><span class="p">);</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="nx">channel</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">once</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">_unsubscribe</span><span class="p">(</span><span class="nx">channelName</span><span class="p">,</span> <span class="nx">channel</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">callback</span><span class="p">);</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
+<span class="p">};</span></pre></div></td></tr><tr id="section-6"><td class="docs"><div class="pilwrap"><a href="#section-6" class="pilcrow">&#182;</a></div><div class="dox"><div class="summary"><p>Подписка на публикации в однои или нескольких каналах</p></div><div class="details"><div class="dox_tag_title">Params</div><div class="dox_tag_detail"><span>channelName </span><span class="dox_type">String</span></div><div class="dox_tag_detail"><span>callback </span><span class="dox_type">Function</span></div></div><div class="body"></div></div>
+</td><td class="code"><div class="highlight"><pre><span class="nx">PubSub</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">subscribe</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">channelName</span><span class="p">,</span> <span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">_subscribe</span><span class="p">(</span><span class="nx">channelName</span><span class="p">,</span> <span class="nx">callback</span><span class="p">);</span>
+
+    <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
+<span class="p">};</span></pre></div></td></tr><tr id="section-7"><td class="docs"><div class="pilwrap"><a href="#section-7" class="pilcrow">&#182;</a></div><div class="dox"><div class="summary"><p>Подписка на публикации в одном или нескольких каналах</p></div><div class="details"><div class="dox_tag_title">Params</div><div class="dox_tag_detail"><span>channelName </span><span class="dox_type">String</span></div><div class="dox_tag_detail"><span>callback </span><span class="dox_type">Function</span></div></div><div class="body"></div></div>
+</td><td class="code"><div class="highlight"><pre><span class="nx">PubSub</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">one</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">channelName</span><span class="p">,</span> <span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">_subscribe</span><span class="p">(</span><span class="nx">channelName</span><span class="p">,</span> <span class="nx">callback</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
+
+    <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
+<span class="p">};</span></pre></div></td></tr><tr id="section-8"><td class="docs"><div class="pilwrap"><a href="#section-8" class="pilcrow">&#182;</a></div><div class="dox"><div class="summary"><p>Подписка на события в однои или нескольких каналах</p></div><div class="details"><div class="dox_tag_title">Params</div><div class="dox_tag_detail"><span>channelName </span><span class="dox_type">String</span></div><div class="dox_tag_detail"><span>callback </span><span class="dox_type">Function</span></div><div class="dox_tag_detail"><span>isOnce </span><span class="dox_type">Boolean</span></div></div><div class="body"></div></div>
+</td><td class="code"><div class="highlight"><pre><span class="nx">PubSub</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">_subscribe</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">channelName</span><span class="p">,</span> <span class="nx">callback</span><span class="p">,</span> <span class="nx">isOnce</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">channels</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_channels</span><span class="p">,</span>
+        <span class="nx">channelNames</span><span class="p">;</span>
+
+    <span class="nx">channelNames</span> <span class="o">=</span> <span class="nx">channelName</span><span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">);</span>
+
+    <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">l</span> <span class="o">=</span> <span class="nx">channelNames</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">l</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">channelName</span> <span class="o">=</span> <span class="nx">channelNames</span><span class="p">[</span><span class="nx">i</span><span class="p">];</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">channels</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">channelName</span><span class="p">))</span> <span class="p">{</span>
+            <span class="nx">channels</span><span class="p">[</span><span class="nx">channelName</span><span class="p">]</span> <span class="o">=</span> <span class="p">[];</span>
+        <span class="p">}</span>
+
+        <span class="nx">channels</span><span class="p">[</span><span class="nx">channelName</span><span class="p">].</span><span class="nx">push</span><span class="p">({</span><span class="s1">&#39;once&#39;</span><span class="o">:</span> <span class="nx">isOnce</span><span class="p">,</span> <span class="s1">&#39;callback&#39;</span><span class="o">:</span> <span class="nx">callback</span><span class="p">});</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
+<span class="p">};</span></pre></div></td></tr><tr id="section-9"><td class="docs"><div class="pilwrap"><a href="#section-9" class="pilcrow">&#182;</a></div><div class="dox"><div class="summary"><p>Отписка от публикаций в одном или нескольких каналах</p></div><div class="details"><div class="dox_tag_title">Params</div><div class="dox_tag_detail"><span>channelName </span><span class="dox_type">String</span></div><div class="dox_tag_detail"><span>[callback] </span><span class="dox_type">Function</span></div></div><div class="body"></div></div>
+</td><td class="code"><div class="highlight"><pre><span class="nx">PubSub</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">unsubscribe</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">channelName</span><span class="p">,</span> <span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">channelNames</span> <span class="o">=</span> <span class="nx">channelName</span><span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">);</span>
+
+    <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">l</span> <span class="o">=</span> <span class="nx">channelNames</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">l</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">_unsubscribe</span><span class="p">(</span><span class="nx">channelNames</span><span class="p">[</span><span class="nx">i</span><span class="p">],</span> <span class="nx">callback</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
+<span class="p">};</span></pre></div></td></tr><tr id="section-10"><td class="docs"><div class="pilwrap"><a href="#section-10" class="pilcrow">&#182;</a></div><div class="dox"><div class="summary"><p>Отписка от получения событий в одном канале</p></div><div class="details"><div class="dox_tag_title">Params</div><div class="dox_tag_detail"><span>channelName </span><span class="dox_type">String</span></div><div class="dox_tag_detail"><span>[callback] </span><span class="dox_type">Function</span></div></div><div class="body"></div></div>
+</td><td class="code"><div class="highlight"><pre><span class="nx">PubSub</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">_unsubscribe</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">channelName</span><span class="p">,</span> <span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">channels</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">_channels</span><span class="p">,</span>
+        <span class="nx">channel</span><span class="p">,</span>
+        <span class="nx">unremovedCallbacks</span> <span class="o">=</span> <span class="p">[];</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">channels</span><span class="p">.</span><span class="nx">hasOwnProperty</span><span class="p">(</span><span class="nx">channelName</span><span class="p">))</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="p">(</span><span class="k">typeof</span> <span class="nx">callback</span> <span class="o">===</span> <span class="s1">&#39;function&#39;</span><span class="p">))</span> <span class="p">{</span>
+        <span class="k">delete</span> <span class="nx">channels</span><span class="p">[</span><span class="nx">channelName</span><span class="p">];</span>
+        <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="nx">channel</span> <span class="o">=</span> <span class="nx">channels</span><span class="p">[</span><span class="nx">channelName</span><span class="p">];</span>
+
+    <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">l</span> <span class="o">=</span> <span class="nx">channel</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">l</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">channel</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">callback</span> <span class="o">!==</span> <span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">unremovedCallbacks</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">channel</span><span class="p">[</span><span class="nx">i</span><span class="p">]);</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="nx">channel</span><span class="p">.</span><span class="nx">length</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+
+    <span class="nb">Array</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">push</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">channel</span><span class="p">,</span> <span class="nx">unremovedCallbacks</span><span class="p">);</span>
+
+    <span class="k">return</span> <span class="kc">null</span><span class="p">;</span>
+<span class="p">};</span>
+
+</pre></div></td></tr></tbody></table><div id="generated">generated Fri May 02 2014 18:12:51 GMT+0400 (MSK)  </div><div id="projectname"><a href="../../index.html">moloko</a></div></div></body></html>

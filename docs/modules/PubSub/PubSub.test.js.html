@@ -1,0 +1,313 @@
+<!DOCTYPE html><html><head><title>PubSub.test.js</title><meta http-equiv="Content-Type" content="text/html" charset="UTF-8"><link rel="stylesheet" media="all" href="../../docco.css"></head><body><div id="container"><div id="background"></div><div id="jump_to">Jump To &hellip;<div id="jump_wrapper"><div id="jump_page"><a href="../../index.html" class="source"><span class="file_name">README</span></a><a href="../../modules/PubSub/PubSub.js.html" class="source "><span class="base_path">modules / PubSub / </span><span class="file_name">PubSub.js</span></a><a href="../../modules/PubSub/PubSub.test.js.html" class="source selected"><span class="base_path">modules / PubSub / </span><span class="file_name">PubSub.test.js</span></a></div></div></div><table cellpadding="0" cellspacing="0"><thead><tr><th class="docs"><h1>PubSub.test.js</h1><div class="filepath">modules/PubSub/</div></th><th class="code"></th></tr></thead><tbody><tr id="section-1"><td class="docs"><div class="pilwrap"><a href="#section-1" class="pilcrow">&#182;</a></div>
+</td><td class="code"><div class="highlight"><pre><span class="nx">describe</span><span class="p">(</span><span class="s1">&#39;PubSub&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">channel</span><span class="p">;</span></pre></div></td></tr><tr id="section-2"><td class="docs"><div class="pilwrap"><a href="#section-2" class="pilcrow">&#182;</a></div><div class="dox"><div class="summary"><ul>
+<li>подписка на один канал / публикация на один канал</li>
+<li>подписка на несколько каналов / публикация на несколько каналов</li>
+<li>одноразовая подписка на один канал / одноразовая публикация на один канал</li>
+<li>одноразовая подписка на несколько каналов / одноразовая публикация на несколько каналов</li>
+</ul></div><div class="body"><ul>
+<li>отписка от одного канала (с каллбеком и без)</li>
+<li>отписка от нескольких каналов (с каллбеком и без)</li>
+<li>отписка от разовой подписки одного канала (с каллбеком и без)</li>
+<li>отписка от разовой подписки нескольких каналов (с каллбеком и без)</li>
+</ul></div></div>
+</td><td class="code"><div class="highlight"><pre>    <span class="nx">beforeEach</span><span class="p">(</span><span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+        <span class="nx">channel</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">PubSub</span><span class="p">();</span>
+    <span class="p">});</span>
+
+    <span class="nx">describe</span><span class="p">(</span><span class="s1">&#39;Subscribe and Publish&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+
+        <span class="nx">it</span><span class="p">(</span><span class="s2">&quot;subscribe to one channel and publish to one channel&quot;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">eventName</span> <span class="o">=</span> <span class="kc">null</span><span class="p">,</span>
+                <span class="nx">eventData</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+
+            <span class="nx">channel</span><span class="p">.</span><span class="nx">subscribe</span><span class="p">(</span><span class="s1">&#39;event&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">e</span><span class="p">,</span> <span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">eventName</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">name</span><span class="p">;</span>
+                <span class="nx">eventData</span> <span class="o">=</span> <span class="nx">data</span><span class="p">;</span>
+            <span class="p">});</span>
+
+            <span class="nx">channel</span><span class="p">.</span><span class="nx">publish</span><span class="p">(</span><span class="s1">&#39;event&#39;</span><span class="p">,</span> <span class="s1">&#39;myData&#39;</span><span class="p">);</span>
+            <span class="nx">expect</span><span class="p">(</span><span class="nx">eventName</span><span class="p">).</span><span class="nx">toEqual</span><span class="p">(</span><span class="s1">&#39;event&#39;</span><span class="p">);</span>
+            <span class="nx">expect</span><span class="p">(</span><span class="nx">eventData</span><span class="p">).</span><span class="nx">toEqual</span><span class="p">(</span><span class="s1">&#39;myData&#39;</span><span class="p">);</span>
+        <span class="p">});</span>
+
+
+        <span class="nx">it</span><span class="p">(</span><span class="s2">&quot;subscribe to several channels and publish to several channels&quot;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">eventName</span> <span class="o">=</span> <span class="kc">null</span><span class="p">,</span>
+                <span class="nx">eventData</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+
+            <span class="nx">channel</span><span class="p">.</span><span class="nx">subscribe</span><span class="p">(</span><span class="s1">&#39;event-1 event-2&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">e</span><span class="p">,</span> <span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">eventName</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">name</span><span class="p">;</span>
+                <span class="nx">eventData</span> <span class="o">=</span> <span class="nx">data</span><span class="p">;</span>
+            <span class="p">});</span>
+
+            <span class="nx">channel</span><span class="p">.</span><span class="nx">publish</span><span class="p">(</span><span class="s1">&#39;event-1&#39;</span><span class="p">,</span> <span class="s1">&#39;myData-1&#39;</span><span class="p">);</span>
+            <span class="nx">expect</span><span class="p">(</span><span class="nx">eventName</span><span class="p">).</span><span class="nx">toEqual</span><span class="p">(</span><span class="s1">&#39;event-1&#39;</span><span class="p">);</span>
+            <span class="nx">expect</span><span class="p">(</span><span class="nx">eventData</span><span class="p">).</span><span class="nx">toEqual</span><span class="p">(</span><span class="s1">&#39;myData-1&#39;</span><span class="p">);</span>
+
+            <span class="nx">channel</span><span class="p">.</span><span class="nx">publish</span><span class="p">(</span><span class="s1">&#39;event-2&#39;</span><span class="p">,</span> <span class="s1">&#39;myData-2&#39;</span><span class="p">);</span>
+            <span class="nx">expect</span><span class="p">(</span><span class="nx">eventName</span><span class="p">).</span><span class="nx">toEqual</span><span class="p">(</span><span class="s1">&#39;event-2&#39;</span><span class="p">);</span>
+            <span class="nx">expect</span><span class="p">(</span><span class="nx">eventData</span><span class="p">).</span><span class="nx">toEqual</span><span class="p">(</span><span class="s1">&#39;myData-2&#39;</span><span class="p">);</span>
+        <span class="p">});</span>
+
+
+        <span class="nx">it</span><span class="p">(</span><span class="s2">&quot;ONCE subscribe to one channel and publish to one channel&quot;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">eventName</span> <span class="o">=</span> <span class="kc">null</span><span class="p">,</span>
+                <span class="nx">eventData</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+
+            <span class="nx">channel</span><span class="p">.</span><span class="nx">one</span><span class="p">(</span><span class="s1">&#39;event&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">e</span><span class="p">,</span> <span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">eventName</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">name</span><span class="p">;</span>
+                <span class="nx">eventData</span> <span class="o">=</span> <span class="nx">data</span><span class="p">;</span>
+            <span class="p">});</span>
+
+            <span class="nx">channel</span><span class="p">.</span><span class="nx">publish</span><span class="p">(</span><span class="s1">&#39;event&#39;</span><span class="p">,</span> <span class="s1">&#39;myData&#39;</span><span class="p">);</span>
+            <span class="nx">expect</span><span class="p">(</span><span class="nx">eventName</span><span class="p">).</span><span class="nx">toEqual</span><span class="p">(</span><span class="s1">&#39;event&#39;</span><span class="p">);</span>
+            <span class="nx">expect</span><span class="p">(</span><span class="nx">eventData</span><span class="p">).</span><span class="nx">toEqual</span><span class="p">(</span><span class="s1">&#39;myData&#39;</span><span class="p">);</span>
+
+            <span class="nx">channel</span><span class="p">.</span><span class="nx">publish</span><span class="p">(</span><span class="s1">&#39;event&#39;</span><span class="p">,</span> <span class="s1">&#39;myData-2&#39;</span><span class="p">);</span>
+            <span class="nx">expect</span><span class="p">(</span><span class="nx">eventName</span><span class="p">).</span><span class="nx">toEqual</span><span class="p">(</span><span class="s1">&#39;event&#39;</span><span class="p">);</span>
+            <span class="nx">expect</span><span class="p">(</span><span class="nx">eventData</span><span class="p">).</span><span class="nx">toEqual</span><span class="p">(</span><span class="s1">&#39;myData&#39;</span><span class="p">);</span>
+        <span class="p">});</span>
+
+
+        <span class="nx">it</span><span class="p">(</span><span class="s2">&quot;ONCE subscribe to several channels and publish to several channels&quot;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">eventName</span> <span class="o">=</span> <span class="kc">null</span><span class="p">,</span>
+                <span class="nx">eventData</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+
+            <span class="nx">channel</span><span class="p">.</span><span class="nx">one</span><span class="p">(</span><span class="s1">&#39;event-1 event-2&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">e</span><span class="p">,</span> <span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">eventName</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">name</span><span class="p">;</span>
+                <span class="nx">eventData</span> <span class="o">=</span> <span class="nx">data</span><span class="p">;</span>
+            <span class="p">});</span>
+
+            <span class="nx">channel</span><span class="p">.</span><span class="nx">publish</span><span class="p">(</span><span class="s1">&#39;event-1&#39;</span><span class="p">,</span> <span class="s1">&#39;myData-1&#39;</span><span class="p">);</span>
+            <span class="nx">expect</span><span class="p">(</span><span class="nx">eventName</span><span class="p">).</span><span class="nx">toEqual</span><span class="p">(</span><span class="s1">&#39;event-1&#39;</span><span class="p">);</span>
+            <span class="nx">expect</span><span class="p">(</span><span class="nx">eventData</span><span class="p">).</span><span class="nx">toEqual</span><span class="p">(</span><span class="s1">&#39;myData-1&#39;</span><span class="p">);</span>
+
+            <span class="nx">channel</span><span class="p">.</span><span class="nx">publish</span><span class="p">(</span><span class="s1">&#39;event-1&#39;</span><span class="p">,</span> <span class="s1">&#39;myData-11&#39;</span><span class="p">);</span>
+            <span class="nx">expect</span><span class="p">(</span><span class="nx">eventName</span><span class="p">).</span><span class="nx">toEqual</span><span class="p">(</span><span class="s1">&#39;event-1&#39;</span><span class="p">);</span>
+            <span class="nx">expect</span><span class="p">(</span><span class="nx">eventData</span><span class="p">).</span><span class="nx">toEqual</span><span class="p">(</span><span class="s1">&#39;myData-1&#39;</span><span class="p">);</span>
+
+            <span class="nx">channel</span><span class="p">.</span><span class="nx">publish</span><span class="p">(</span><span class="s1">&#39;event-2&#39;</span><span class="p">,</span> <span class="s1">&#39;myData-2&#39;</span><span class="p">);</span>
+            <span class="nx">expect</span><span class="p">(</span><span class="nx">eventName</span><span class="p">).</span><span class="nx">toEqual</span><span class="p">(</span><span class="s1">&#39;event-2&#39;</span><span class="p">);</span>
+            <span class="nx">expect</span><span class="p">(</span><span class="nx">eventData</span><span class="p">).</span><span class="nx">toEqual</span><span class="p">(</span><span class="s1">&#39;myData-2&#39;</span><span class="p">);</span>
+
+            <span class="nx">channel</span><span class="p">.</span><span class="nx">publish</span><span class="p">(</span><span class="s1">&#39;event-2&#39;</span><span class="p">,</span> <span class="s1">&#39;myData-21&#39;</span><span class="p">);</span>
+            <span class="nx">expect</span><span class="p">(</span><span class="nx">eventName</span><span class="p">).</span><span class="nx">toEqual</span><span class="p">(</span><span class="s1">&#39;event-2&#39;</span><span class="p">);</span>
+            <span class="nx">expect</span><span class="p">(</span><span class="nx">eventData</span><span class="p">).</span><span class="nx">toEqual</span><span class="p">(</span><span class="s1">&#39;myData-2&#39;</span><span class="p">);</span>
+        <span class="p">});</span>
+    <span class="p">});</span>
+
+
+
+    <span class="nx">describe</span><span class="p">(</span><span class="s1">&#39;Unsubscribe&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+
+        <span class="nx">it</span><span class="p">(</span><span class="s2">&quot;unsubscribe from one channel by channel name&quot;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">eventName</span> <span class="o">=</span> <span class="kc">null</span><span class="p">,</span>
+                <span class="nx">eventData</span> <span class="o">=</span> <span class="kc">null</span><span class="p">,</span>
+                <span class="nx">eventName2</span> <span class="o">=</span> <span class="kc">null</span><span class="p">,</span>
+                <span class="nx">eventData2</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+
+            <span class="nx">channel</span><span class="p">.</span><span class="nx">subscribe</span><span class="p">(</span><span class="s1">&#39;event&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">e</span><span class="p">,</span> <span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">eventName</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">name</span><span class="p">;</span>
+                <span class="nx">eventData</span> <span class="o">=</span> <span class="nx">data</span><span class="p">;</span>
+            <span class="p">});</span>
+
+            <span class="nx">channel</span><span class="p">.</span><span class="nx">subscribe</span><span class="p">(</span><span class="s1">&#39;event&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">e</span><span class="p">,</span> <span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">eventName2</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">name</span><span class="p">;</span>
+                <span class="nx">eventData2</span> <span class="o">=</span> <span class="nx">data</span><span class="p">;</span>
+            <span class="p">});</span>
+
+            <span class="nx">channel</span><span class="p">.</span><span class="nx">publish</span><span class="p">(</span><span class="s1">&#39;event&#39;</span><span class="p">,</span> <span class="s1">&#39;myData&#39;</span><span class="p">);</span>
+            <span class="nx">expect</span><span class="p">(</span><span class="nx">eventName</span><span class="p">).</span><span class="nx">toEqual</span><span class="p">(</span><span class="s1">&#39;event&#39;</span><span class="p">);</span>
+            <span class="nx">expect</span><span class="p">(</span><span class="nx">eventData</span><span class="p">).</span><span class="nx">toEqual</span><span class="p">(</span><span class="s1">&#39;myData&#39;</span><span class="p">);</span>
+            <span class="nx">expect</span><span class="p">(</span><span class="nx">eventName2</span><span class="p">).</span><span class="nx">toEqual</span><span class="p">(</span><span class="s1">&#39;event&#39;</span><span class="p">);</span>
+            <span class="nx">expect</span><span class="p">(</span><span class="nx">eventData2</span><span class="p">).</span><span class="nx">toEqual</span><span class="p">(</span><span class="s1">&#39;myData&#39;</span><span class="p">);</span>
+
+            <span class="nx">channel</span><span class="p">.</span><span class="nx">unsubscribe</span><span class="p">(</span><span class="s1">&#39;event&#39;</span><span class="p">);</span></pre></div></td></tr><tr id="section-3"><td class="docs"><div class="pilwrap"><a href="#section-3" class="pilcrow">&#182;</a></div><p>All subscribers must be unsubscribe</p>
+</td><td class="code"><div class="highlight"><pre>            <span class="nx">channel</span><span class="p">.</span><span class="nx">publish</span><span class="p">(</span><span class="s1">&#39;event&#39;</span><span class="p">,</span> <span class="s1">&#39;myData2&#39;</span><span class="p">);</span>
+            <span class="nx">expect</span><span class="p">(</span><span class="nx">eventName</span><span class="p">).</span><span class="nx">toEqual</span><span class="p">(</span><span class="s1">&#39;event&#39;</span><span class="p">);</span>
+            <span class="nx">expect</span><span class="p">(</span><span class="nx">eventData</span><span class="p">).</span><span class="nx">toEqual</span><span class="p">(</span><span class="s1">&#39;myData&#39;</span><span class="p">);</span>
+            <span class="nx">expect</span><span class="p">(</span><span class="nx">eventName2</span><span class="p">).</span><span class="nx">toEqual</span><span class="p">(</span><span class="s1">&#39;event&#39;</span><span class="p">);</span>
+            <span class="nx">expect</span><span class="p">(</span><span class="nx">eventData2</span><span class="p">).</span><span class="nx">toEqual</span><span class="p">(</span><span class="s1">&#39;myData&#39;</span><span class="p">);</span>
+        <span class="p">});</span>
+
+        <span class="nx">it</span><span class="p">(</span><span class="s2">&quot;unsubscribe from one channel by channel name and callback reference&quot;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">eventName</span> <span class="o">=</span> <span class="kc">null</span><span class="p">,</span>
+                <span class="nx">eventData</span> <span class="o">=</span> <span class="kc">null</span><span class="p">,</span>
+                <span class="nx">eventName2</span> <span class="o">=</span> <span class="kc">null</span><span class="p">,</span>
+                <span class="nx">eventData2</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+
+            <span class="kd">function</span> <span class="nx">callback</span> <span class="p">(</span><span class="nx">e</span><span class="p">,</span> <span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">eventName</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">name</span><span class="p">;</span>
+                <span class="nx">eventData</span> <span class="o">=</span> <span class="nx">data</span><span class="p">;</span>
+            <span class="p">}</span>
+
+            <span class="nx">channel</span><span class="p">.</span><span class="nx">subscribe</span><span class="p">(</span><span class="s1">&#39;event&#39;</span><span class="p">,</span> <span class="nx">callback</span><span class="p">);</span>
+
+            <span class="nx">channel</span><span class="p">.</span><span class="nx">subscribe</span><span class="p">(</span><span class="s1">&#39;event&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">e</span><span class="p">,</span> <span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">eventName2</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">name</span><span class="p">;</span>
+                <span class="nx">eventData2</span> <span class="o">=</span> <span class="nx">data</span><span class="p">;</span>
+            <span class="p">});</span>
+
+            <span class="nx">channel</span><span class="p">.</span><span class="nx">publish</span><span class="p">(</span><span class="s1">&#39;event&#39;</span><span class="p">,</span> <span class="s1">&#39;myData&#39;</span><span class="p">);</span>
+            <span class="nx">expect</span><span class="p">(</span><span class="nx">eventName</span><span class="p">).</span><span class="nx">toEqual</span><span class="p">(</span><span class="s1">&#39;event&#39;</span><span class="p">);</span>
+            <span class="nx">expect</span><span class="p">(</span><span class="nx">eventData</span><span class="p">).</span><span class="nx">toEqual</span><span class="p">(</span><span class="s1">&#39;myData&#39;</span><span class="p">);</span>
+            <span class="nx">expect</span><span class="p">(</span><span class="nx">eventName2</span><span class="p">).</span><span class="nx">toEqual</span><span class="p">(</span><span class="s1">&#39;event&#39;</span><span class="p">);</span>
+            <span class="nx">expect</span><span class="p">(</span><span class="nx">eventData2</span><span class="p">).</span><span class="nx">toEqual</span><span class="p">(</span><span class="s1">&#39;myData&#39;</span><span class="p">);</span>
+
+            <span class="nx">channel</span><span class="p">.</span><span class="nx">unsubscribe</span><span class="p">(</span><span class="s1">&#39;event&#39;</span><span class="p">,</span> <span class="nx">callback</span><span class="p">);</span></pre></div></td></tr><tr id="section-4"><td class="docs"><div class="pilwrap"><a href="#section-4" class="pilcrow">&#182;</a></div><p>Only subscriber with callback must be unsubscribe</p>
+</td><td class="code"><div class="highlight"><pre>            <span class="nx">channel</span><span class="p">.</span><span class="nx">publish</span><span class="p">(</span><span class="s1">&#39;event&#39;</span><span class="p">,</span> <span class="s1">&#39;myData2&#39;</span><span class="p">);</span>
+            <span class="nx">expect</span><span class="p">(</span><span class="nx">eventName</span><span class="p">).</span><span class="nx">toEqual</span><span class="p">(</span><span class="s1">&#39;event&#39;</span><span class="p">);</span>
+            <span class="nx">expect</span><span class="p">(</span><span class="nx">eventData</span><span class="p">).</span><span class="nx">toEqual</span><span class="p">(</span><span class="s1">&#39;myData&#39;</span><span class="p">);</span>
+            <span class="nx">expect</span><span class="p">(</span><span class="nx">eventName2</span><span class="p">).</span><span class="nx">toEqual</span><span class="p">(</span><span class="s1">&#39;event&#39;</span><span class="p">);</span>
+            <span class="nx">expect</span><span class="p">(</span><span class="nx">eventData2</span><span class="p">).</span><span class="nx">toEqual</span><span class="p">(</span><span class="s1">&#39;myData2&#39;</span><span class="p">);</span>
+        <span class="p">});</span>
+
+        <span class="nx">it</span><span class="p">(</span><span class="s2">&quot;unsubscribe from several channels by channels name&quot;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">events</span> <span class="o">=</span> <span class="p">{};</span>
+
+            <span class="nx">channel</span><span class="p">.</span><span class="nx">subscribe</span><span class="p">(</span><span class="s1">&#39;event-1 event-2 event-3&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">e</span><span class="p">,</span> <span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">events</span><span class="p">[</span><span class="nx">e</span><span class="p">.</span><span class="nx">name</span><span class="p">]</span> <span class="o">=</span> <span class="nx">data</span><span class="p">;</span>
+            <span class="p">});</span>
+
+            <span class="nx">channel</span><span class="p">.</span><span class="nx">publish</span><span class="p">(</span><span class="s1">&#39;event-1 event-2 event-3&#39;</span><span class="p">,</span> <span class="s1">&#39;myData&#39;</span><span class="p">);</span>
+            <span class="nx">expect</span><span class="p">(</span><span class="nx">events</span><span class="p">[</span><span class="s1">&#39;event-1&#39;</span><span class="p">]).</span><span class="nx">toEqual</span><span class="p">(</span><span class="s1">&#39;myData&#39;</span><span class="p">);</span>
+            <span class="nx">expect</span><span class="p">(</span><span class="nx">events</span><span class="p">[</span><span class="s1">&#39;event-2&#39;</span><span class="p">]).</span><span class="nx">toEqual</span><span class="p">(</span><span class="s1">&#39;myData&#39;</span><span class="p">);</span>
+            <span class="nx">expect</span><span class="p">(</span><span class="nx">events</span><span class="p">[</span><span class="s1">&#39;event-3&#39;</span><span class="p">]).</span><span class="nx">toEqual</span><span class="p">(</span><span class="s1">&#39;myData&#39;</span><span class="p">);</span>
+
+            <span class="nx">channel</span><span class="p">.</span><span class="nx">unsubscribe</span><span class="p">(</span><span class="s1">&#39;event-1 event-2&#39;</span><span class="p">);</span></pre></div></td></tr><tr id="section-5"><td class="docs"><div class="pilwrap"><a href="#section-5" class="pilcrow">&#182;</a></div><p>All subscribers must be unsubscribe, except for "event-3"</p>
+</td><td class="code"><div class="highlight"><pre>            <span class="nx">channel</span><span class="p">.</span><span class="nx">publish</span><span class="p">(</span><span class="s1">&#39;event-1 event-2 event-3&#39;</span><span class="p">,</span> <span class="s1">&#39;myData2&#39;</span><span class="p">);</span>
+            <span class="nx">expect</span><span class="p">(</span><span class="nx">events</span><span class="p">[</span><span class="s1">&#39;event-1&#39;</span><span class="p">]).</span><span class="nx">toEqual</span><span class="p">(</span><span class="s1">&#39;myData&#39;</span><span class="p">);</span>
+            <span class="nx">expect</span><span class="p">(</span><span class="nx">events</span><span class="p">[</span><span class="s1">&#39;event-2&#39;</span><span class="p">]).</span><span class="nx">toEqual</span><span class="p">(</span><span class="s1">&#39;myData&#39;</span><span class="p">);</span>
+            <span class="nx">expect</span><span class="p">(</span><span class="nx">events</span><span class="p">[</span><span class="s1">&#39;event-3&#39;</span><span class="p">]).</span><span class="nx">toEqual</span><span class="p">(</span><span class="s1">&#39;myData2&#39;</span><span class="p">);</span>
+        <span class="p">});</span>
+
+        <span class="nx">it</span><span class="p">(</span><span class="s2">&quot;unsubscribe from several channels by channels name and callback reference&quot;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">events</span> <span class="o">=</span> <span class="p">{};</span>
+
+            <span class="kd">function</span> <span class="nx">callback</span> <span class="p">(</span><span class="nx">e</span><span class="p">,</span> <span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">events</span><span class="p">[</span><span class="nx">e</span><span class="p">.</span><span class="nx">name</span><span class="p">]</span> <span class="o">=</span> <span class="nx">data</span><span class="p">;</span>
+            <span class="p">}</span>
+
+            <span class="nx">channel</span><span class="p">.</span><span class="nx">subscribe</span><span class="p">(</span><span class="s1">&#39;event-1 event-2&#39;</span><span class="p">,</span> <span class="nx">callback</span><span class="p">);</span>
+
+            <span class="nx">channel</span><span class="p">.</span><span class="nx">subscribe</span><span class="p">(</span><span class="s1">&#39;event-2&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">e</span><span class="p">,</span> <span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">events</span><span class="p">[</span><span class="s1">&#39;event-2a&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nx">data</span><span class="p">;</span>
+            <span class="p">});</span>
+
+
+            <span class="nx">channel</span><span class="p">.</span><span class="nx">publish</span><span class="p">(</span><span class="s1">&#39;event-1 event-2&#39;</span><span class="p">,</span> <span class="s1">&#39;myData&#39;</span><span class="p">);</span>
+            <span class="nx">expect</span><span class="p">(</span><span class="nx">events</span><span class="p">[</span><span class="s1">&#39;event-1&#39;</span><span class="p">]).</span><span class="nx">toEqual</span><span class="p">(</span><span class="s1">&#39;myData&#39;</span><span class="p">);</span>
+            <span class="nx">expect</span><span class="p">(</span><span class="nx">events</span><span class="p">[</span><span class="s1">&#39;event-2&#39;</span><span class="p">]).</span><span class="nx">toEqual</span><span class="p">(</span><span class="s1">&#39;myData&#39;</span><span class="p">);</span>
+            <span class="nx">expect</span><span class="p">(</span><span class="nx">events</span><span class="p">[</span><span class="s1">&#39;event-2a&#39;</span><span class="p">]).</span><span class="nx">toEqual</span><span class="p">(</span><span class="s1">&#39;myData&#39;</span><span class="p">);</span>
+
+            <span class="nx">channel</span><span class="p">.</span><span class="nx">unsubscribe</span><span class="p">(</span><span class="s1">&#39;event-1 event-2&#39;</span><span class="p">,</span> <span class="nx">callback</span><span class="p">);</span></pre></div></td></tr><tr id="section-6"><td class="docs"><div class="pilwrap"><a href="#section-6" class="pilcrow">&#182;</a></div><p>All subscribers must be unsubscribe, except for "event-2" with another callback</p>
+</td><td class="code"><div class="highlight"><pre>            <span class="nx">channel</span><span class="p">.</span><span class="nx">publish</span><span class="p">(</span><span class="s1">&#39;event-1 event-2&#39;</span><span class="p">,</span> <span class="s1">&#39;myData2&#39;</span><span class="p">);</span>
+            <span class="nx">expect</span><span class="p">(</span><span class="nx">events</span><span class="p">[</span><span class="s1">&#39;event-1&#39;</span><span class="p">]).</span><span class="nx">toEqual</span><span class="p">(</span><span class="s1">&#39;myData&#39;</span><span class="p">);</span>
+            <span class="nx">expect</span><span class="p">(</span><span class="nx">events</span><span class="p">[</span><span class="s1">&#39;event-2&#39;</span><span class="p">]).</span><span class="nx">toEqual</span><span class="p">(</span><span class="s1">&#39;myData&#39;</span><span class="p">);</span>
+            <span class="nx">expect</span><span class="p">(</span><span class="nx">events</span><span class="p">[</span><span class="s1">&#39;event-2a&#39;</span><span class="p">]).</span><span class="nx">toEqual</span><span class="p">(</span><span class="s1">&#39;myData2&#39;</span><span class="p">);</span>
+        <span class="p">});</span>
+    <span class="p">});</span>
+
+
+
+    <span class="nx">describe</span><span class="p">(</span><span class="s1">&#39;ONCE Unsubscribe&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+
+        <span class="nx">it</span><span class="p">(</span><span class="s2">&quot;ONCE unsubscribe from one channel by channel name&quot;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">eventName</span> <span class="o">=</span> <span class="s1">&#39;notName&#39;</span><span class="p">,</span>
+                <span class="nx">eventData</span> <span class="o">=</span> <span class="s1">&#39;notData&#39;</span><span class="p">,</span>
+                <span class="nx">eventName2</span> <span class="o">=</span> <span class="s1">&#39;notName&#39;</span><span class="p">,</span>
+                <span class="nx">eventData2</span> <span class="o">=</span> <span class="s1">&#39;notData&#39;</span><span class="p">;</span>
+
+            <span class="nx">channel</span><span class="p">.</span><span class="nx">one</span><span class="p">(</span><span class="s1">&#39;event&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">e</span><span class="p">,</span> <span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">eventName</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">name</span><span class="p">;</span>
+                <span class="nx">eventData</span> <span class="o">=</span> <span class="nx">data</span><span class="p">;</span>
+            <span class="p">});</span>
+
+            <span class="nx">channel</span><span class="p">.</span><span class="nx">one</span><span class="p">(</span><span class="s1">&#39;event&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">e</span><span class="p">,</span> <span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">eventName2</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">name</span><span class="p">;</span>
+                <span class="nx">eventData2</span> <span class="o">=</span> <span class="nx">data</span><span class="p">;</span>
+            <span class="p">});</span>
+
+            <span class="nx">channel</span><span class="p">.</span><span class="nx">unsubscribe</span><span class="p">(</span><span class="s1">&#39;event&#39;</span><span class="p">);</span>
+
+            <span class="nx">channel</span><span class="p">.</span><span class="nx">publish</span><span class="p">(</span><span class="s1">&#39;event&#39;</span><span class="p">,</span> <span class="s1">&#39;myData&#39;</span><span class="p">);</span>
+
+            <span class="nx">expect</span><span class="p">(</span><span class="nx">eventName</span><span class="p">).</span><span class="nx">toEqual</span><span class="p">(</span><span class="s1">&#39;notName&#39;</span><span class="p">);</span>
+            <span class="nx">expect</span><span class="p">(</span><span class="nx">eventData</span><span class="p">).</span><span class="nx">toEqual</span><span class="p">(</span><span class="s1">&#39;notData&#39;</span><span class="p">);</span>
+            <span class="nx">expect</span><span class="p">(</span><span class="nx">eventName2</span><span class="p">).</span><span class="nx">toEqual</span><span class="p">(</span><span class="s1">&#39;notName&#39;</span><span class="p">);</span>
+            <span class="nx">expect</span><span class="p">(</span><span class="nx">eventData2</span><span class="p">).</span><span class="nx">toEqual</span><span class="p">(</span><span class="s1">&#39;notData&#39;</span><span class="p">);</span>
+        <span class="p">});</span>
+
+        <span class="nx">it</span><span class="p">(</span><span class="s2">&quot;ONCE unsubscribe from one channel by channel name and callback reference&quot;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">eventName</span> <span class="o">=</span> <span class="s1">&#39;notName&#39;</span><span class="p">,</span>
+                <span class="nx">eventData</span> <span class="o">=</span> <span class="s1">&#39;notData&#39;</span><span class="p">,</span>
+                <span class="nx">eventName2</span> <span class="o">=</span> <span class="s1">&#39;notName&#39;</span><span class="p">,</span>
+                <span class="nx">eventData2</span> <span class="o">=</span> <span class="s1">&#39;notData&#39;</span><span class="p">;</span>
+
+            <span class="kd">function</span> <span class="nx">callback</span> <span class="p">(</span><span class="nx">e</span><span class="p">,</span> <span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">eventName</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">name</span><span class="p">;</span>
+                <span class="nx">eventData</span> <span class="o">=</span> <span class="nx">data</span><span class="p">;</span>
+            <span class="p">}</span>
+
+            <span class="nx">channel</span><span class="p">.</span><span class="nx">one</span><span class="p">(</span><span class="s1">&#39;event&#39;</span><span class="p">,</span> <span class="nx">callback</span><span class="p">);</span>
+
+            <span class="nx">channel</span><span class="p">.</span><span class="nx">one</span><span class="p">(</span><span class="s1">&#39;event&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">e</span><span class="p">,</span> <span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">eventName2</span> <span class="o">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">name</span><span class="p">;</span>
+                <span class="nx">eventData2</span> <span class="o">=</span> <span class="nx">data</span><span class="p">;</span>
+            <span class="p">});</span>
+
+            <span class="nx">channel</span><span class="p">.</span><span class="nx">unsubscribe</span><span class="p">(</span><span class="s1">&#39;event&#39;</span><span class="p">,</span> <span class="nx">callback</span><span class="p">);</span>
+            <span class="nx">channel</span><span class="p">.</span><span class="nx">publish</span><span class="p">(</span><span class="s1">&#39;event&#39;</span><span class="p">,</span> <span class="s1">&#39;myData&#39;</span><span class="p">);</span>
+            <span class="nx">expect</span><span class="p">(</span><span class="nx">eventName</span><span class="p">).</span><span class="nx">toEqual</span><span class="p">(</span><span class="s1">&#39;notName&#39;</span><span class="p">);</span>
+            <span class="nx">expect</span><span class="p">(</span><span class="nx">eventData</span><span class="p">).</span><span class="nx">toEqual</span><span class="p">(</span><span class="s1">&#39;notData&#39;</span><span class="p">);</span>
+            <span class="nx">expect</span><span class="p">(</span><span class="nx">eventName2</span><span class="p">).</span><span class="nx">toEqual</span><span class="p">(</span><span class="s1">&#39;event&#39;</span><span class="p">);</span>
+            <span class="nx">expect</span><span class="p">(</span><span class="nx">eventData2</span><span class="p">).</span><span class="nx">toEqual</span><span class="p">(</span><span class="s1">&#39;myData&#39;</span><span class="p">);</span>
+        <span class="p">});</span>
+
+        <span class="nx">it</span><span class="p">(</span><span class="s2">&quot;ONCE unsubscribe from several channels by channels name&quot;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">events</span> <span class="o">=</span> <span class="p">{};</span>
+
+            <span class="nx">events</span><span class="p">[</span><span class="s1">&#39;event-1&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;notData&#39;</span><span class="p">;</span>
+            <span class="nx">events</span><span class="p">[</span><span class="s1">&#39;event-2&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;notData&#39;</span><span class="p">;</span>
+            <span class="nx">events</span><span class="p">[</span><span class="s1">&#39;event-3&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;notData&#39;</span><span class="p">;</span>
+
+            <span class="nx">channel</span><span class="p">.</span><span class="nx">one</span><span class="p">(</span><span class="s1">&#39;event-1 event-2 event-3&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">e</span><span class="p">,</span> <span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">events</span><span class="p">[</span><span class="nx">e</span><span class="p">.</span><span class="nx">name</span><span class="p">]</span> <span class="o">=</span> <span class="nx">data</span><span class="p">;</span>
+            <span class="p">});</span>
+
+            <span class="nx">channel</span><span class="p">.</span><span class="nx">unsubscribe</span><span class="p">(</span><span class="s1">&#39;event-1 event-2&#39;</span><span class="p">);</span>
+            <span class="nx">channel</span><span class="p">.</span><span class="nx">publish</span><span class="p">(</span><span class="s1">&#39;event-1 event-2 event-3&#39;</span><span class="p">,</span> <span class="s1">&#39;myData&#39;</span><span class="p">);</span>
+            <span class="nx">expect</span><span class="p">(</span><span class="nx">events</span><span class="p">[</span><span class="s1">&#39;event-1&#39;</span><span class="p">]).</span><span class="nx">toEqual</span><span class="p">(</span><span class="s1">&#39;notData&#39;</span><span class="p">);</span>
+            <span class="nx">expect</span><span class="p">(</span><span class="nx">events</span><span class="p">[</span><span class="s1">&#39;event-2&#39;</span><span class="p">]).</span><span class="nx">toEqual</span><span class="p">(</span><span class="s1">&#39;notData&#39;</span><span class="p">);</span>
+            <span class="nx">expect</span><span class="p">(</span><span class="nx">events</span><span class="p">[</span><span class="s1">&#39;event-3&#39;</span><span class="p">]).</span><span class="nx">toEqual</span><span class="p">(</span><span class="s1">&#39;myData&#39;</span><span class="p">);</span>
+        <span class="p">});</span>
+
+        <span class="nx">it</span><span class="p">(</span><span class="s2">&quot;ONCE unsubscribe from several channels by channels name and callback reference&quot;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">events</span> <span class="o">=</span> <span class="p">{};</span>
+
+            <span class="nx">events</span><span class="p">[</span><span class="s1">&#39;event-1&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;notData&#39;</span><span class="p">;</span>
+            <span class="nx">events</span><span class="p">[</span><span class="s1">&#39;event-2&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;notData&#39;</span><span class="p">;</span>
+            <span class="nx">events</span><span class="p">[</span><span class="s1">&#39;event-3&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;notData&#39;</span><span class="p">;</span>
+
+            <span class="kd">function</span> <span class="nx">callback</span> <span class="p">(</span><span class="nx">e</span><span class="p">,</span> <span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">events</span><span class="p">[</span><span class="nx">e</span><span class="p">.</span><span class="nx">name</span><span class="p">]</span> <span class="o">=</span> <span class="nx">data</span><span class="p">;</span>
+            <span class="p">}</span>
+
+            <span class="nx">channel</span><span class="p">.</span><span class="nx">subscribe</span><span class="p">(</span><span class="s1">&#39;event-1 event-2&#39;</span><span class="p">,</span> <span class="nx">callback</span><span class="p">);</span>
+
+            <span class="nx">channel</span><span class="p">.</span><span class="nx">subscribe</span><span class="p">(</span><span class="s1">&#39;event-2&#39;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">e</span><span class="p">,</span> <span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">events</span><span class="p">[</span><span class="s1">&#39;event-2a&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nx">data</span><span class="p">;</span>
+            <span class="p">});</span>
+
+
+            <span class="nx">channel</span><span class="p">.</span><span class="nx">unsubscribe</span><span class="p">(</span><span class="s1">&#39;event-1 event-2&#39;</span><span class="p">,</span> <span class="nx">callback</span><span class="p">);</span>
+            <span class="nx">channel</span><span class="p">.</span><span class="nx">publish</span><span class="p">(</span><span class="s1">&#39;event-1 event-2&#39;</span><span class="p">,</span> <span class="s1">&#39;myData&#39;</span><span class="p">);</span>
+            <span class="nx">expect</span><span class="p">(</span><span class="nx">events</span><span class="p">[</span><span class="s1">&#39;event-1&#39;</span><span class="p">]).</span><span class="nx">toEqual</span><span class="p">(</span><span class="s1">&#39;notData&#39;</span><span class="p">);</span>
+            <span class="nx">expect</span><span class="p">(</span><span class="nx">events</span><span class="p">[</span><span class="s1">&#39;event-2&#39;</span><span class="p">]).</span><span class="nx">toEqual</span><span class="p">(</span><span class="s1">&#39;notData&#39;</span><span class="p">);</span>
+            <span class="nx">expect</span><span class="p">(</span><span class="nx">events</span><span class="p">[</span><span class="s1">&#39;event-2a&#39;</span><span class="p">]).</span><span class="nx">toEqual</span><span class="p">(</span><span class="s1">&#39;myData&#39;</span><span class="p">);</span>
+        <span class="p">});</span>
+    <span class="p">});</span>
+<span class="p">});</span>
+
+</pre></div></td></tr></tbody></table><div id="generated">generated Fri May 02 2014 18:12:51 GMT+0400 (MSK)  </div><div id="projectname"><a href="../../index.html">moloko</a></div></div></body></html>
