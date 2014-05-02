@@ -8,8 +8,8 @@ Publish–subscribe pattern
 
 **Main fetures**
 
-* Subscribe/unsubscribe to one or several channel
-* Publish to one or several channel
+* Subscribe/unsubscribe to one or several channels
+* Publish to one or several channels
 * Method *.one* fire one time and unsubscribe after that
 * Have shortcuts: trigger, on, off
 
