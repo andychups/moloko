@@ -106,6 +106,12 @@ PubSub.prototype.publish = function () {
 };
 
 /**
+ * Шоркат метода publish
+ * @type {Function}
+ */
+PubSub.prototype.trigger = PubSub.prototype.publish;
+
+/**
  * Публикация для одного канала
  * @protected
  * @param {String} channelName
@@ -128,7 +134,6 @@ PubSub.prototype._publish = function (channelName, args) {
 
     i = 0;
     l = channel.length;
-
 
     for (; i < l; i++) {
         channelEventObject = channel[i];
@@ -154,6 +159,12 @@ PubSub.prototype.subscribe = function (channelName, callback) {
 
     return this;
 };
+
+/**
+ * Шорткат метода subscribe
+ * @type {Function}
+ */
+PubSub.prototype.on = PubSub.prototype.subscribe;
 
 /**
  * Подписка на публикации в одном или нескольких каналах
@@ -228,6 +239,12 @@ PubSub.prototype.unsubscribe = function (channelName, callback) {
 
     return this;
 };
+
+/**
+ * Шорткат метода unsubscribe
+ * @type {Function}
+ */
+PubSub.prototype.off = PubSub.prototype.unsubscribe;
 
 /**
  * Отписка от получения событий в одном канале

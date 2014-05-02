@@ -10,7 +10,8 @@ Publish–subscribe pattern
 
 * Subscribe/unsubscribe to one or several channel
 * Publish to one or several channel
-* Method *.one* fire one time and unsubscribe after
+* Method *.one* fire one time and unsubscribe after that
+* Have shortcuts: trigger, on, off
 
 **Example**
 
@@ -40,4 +41,11 @@ channel.unsubscribe('channel1 channel2');
 channel.unsubscribe('channel3', callback);
 
 channel.unsubscribe('channel3');
+
+
+channel.on('channel1', callback);
+
+channel.trigger('channel1');
+
+channel.off('channel1');
 ```
