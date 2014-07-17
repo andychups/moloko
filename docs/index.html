@@ -19,15 +19,19 @@ SUM:                             2            136            123            388
 <p><strong>Main fetures</strong></p>
 
 <ul>
-<li>Subscribe/unsubscribe to one or several channel</li>
-<li>Publish to one or several channel</li>
+<li>Subscribe/unsubscribe to one or several channels</li>
+<li>Publish to one or several channels</li>
 <li>Method <em>.one</em> fire one time and unsubscribe after that</li>
 <li>Have shortcuts: trigger, on, off</li>
 </ul>
 
+<p><strong>Benchmarks</strong></p>
+
+<p>http://jsperf.com/pubsubjs-vs-jquery-custom-events/142</p>
+
 <p><strong>Example</strong></p>
 
-<p>```
+<p>```javascript
 var channel = new PubSub();</p>
 
 <p>function callback (e, data) {
@@ -59,4 +63,4 @@ var channel = new PubSub();</p>
 <p>channel.trigger('channel1');</p>
 
 <p>channel.off('channel1');
-```</p>  </td></tr></tbody></table><div id="generated">generated Fri May 02 2014 23:46:57 GMT+0400 (MSK)  </div><div id="projectname"><a href="./index.html">moloko</a></div></div></body></html>
+```</p>  </td></tr></tbody></table><div id="generated">generated Thu May 08 2014 14:32:57 GMT+0400 (MSK)  </div><div id="projectname"><a href="./index.html">moloko</a></div></div></body></html>
