@@ -8,7 +8,7 @@ function Model (props) {
     this.props = props;
 }
 
-inherit(PubSub, Model);
+extend(Model, PubSub);
 
 /**
  * Метод устанавливает свойство модели
@@ -19,11 +19,10 @@ Model.prototype.set = function (propertyName, value) {
     var props = this.props;
 
     if (props.hasOwnProperty(propertyName)) {
-        this.trigger('change:'+propertyName, {'propertyName': propertyName, 'value': value});
-    } else {
-        this.trigger('add', {'propertyName': propertyName, 'value': value});
+        this.trigger('change:'+propertyName, {'propertyName': propertyName, 'value': value, 'prevValue': this.props[propertyName]});
     }
 
+    this.trigger('change', {'propertyName': propertyName, 'value': value});
     this.props[propertyName] = value;
 }
 
@@ -35,24 +34,5 @@ Model.prototype.set = function (propertyName, value) {
 Model.prototype.get = function (propertyName) {
     var props = this.props;
 
-    if (props.hasOwnProperty(propertyName)) {
-        return props[propertyName];
-    }
-
-    return null;
+    return props.hasOwnProperty(propertyName) ? props[propertyName] : null;
 }
-
-var m = new Model({'foo': 1, 'bar': 2});
-
-console.log(m);
-
-m.on('change:foo', function (e, data) {
-    console.log(e, data);
-});
-
-m.on('add', function (e, data) {
-    console.log(e, data);
-});
-
-m.set('foo', 'NEWAVE!!!');
-m.set('newFoo', 'NEWFOOO');
